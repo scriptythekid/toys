@@ -1,0 +1,27 @@
+#!/bin/sh
+
+#munin "plugin" for watching the size of $HOME/.xsessionerrors logfile ...
+#see: https://bugs.launchpad.net/ubuntu/+source/gdm/+bug/60448
+# "(...)I have this on a fresh install of 11.04, in about 5 days without rebooting, logging-out/in or suspending my .xsession-errors fills up to about 140 GB."
+#
+# set $homedir to dir of your choosing
+
+homedir=/home/scripty/
+
+case $1 in
+  config)
+       cat << 'EOM'
+graph_args --base 1024 -l 0
+graph_title xsession-errors file size
+graph_vlabel xsessionerrors
+xsessionerrors.label size
+xsessionerrors.warning 1073741824
+xsessionerrors.critical 10737418240
+graph_info The Size of scripty\'s xsession-errors file in bytes
+xsessionerrors.info File size of xsession-errors
+EOM
+       exit 0;;
+esac
+
+echo -n "xsessionerrors.value "
+ls -la ${homedir}.xsession-errors | cut -d' ' -f5
